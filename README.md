@@ -79,7 +79,7 @@ The frontend constructs a structured prompt based on the user's input, selected 
 
 ## Features
 
-- **Multi-output generation** — Flashcards, MCQs, Key Concepts, Revision Cards, and Practice Questions from a single input
+- **Multi-output generation** — Flashcards, MCQs, Key Concepts, Revision Cards.
 - **Adjustable difficulty** — Beginner, Intermediate, and Advanced modes
 - **Configurable flashcard count** — 10, 15, 20, or 25 cards
 - **Export options** — Download as JSON, download as TXT, or copy to clipboard
