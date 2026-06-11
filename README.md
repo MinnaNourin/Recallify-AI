@@ -20,8 +20,6 @@ The tool generates five output types from a single input:
 | **Flashcards** | Q&A pairs for active recall practice |
 | **Key Concepts** | Glossary-style term and definition extraction |
 | **Revision Cards** | Bullet-point summaries for quick review |
-| **MCQs** | Multiple-choice questions for self-assessment |
-| **Practice Questions** | Open-ended questions for deeper understanding |
 
 ---
 
@@ -131,16 +129,6 @@ The app will be available at `http://localhost:3000`.
 
 ---
 
-## Environment Variables
-
-| Variable | Description |
-|---|---|
-| `GROQ_API_KEY` | Your Groq API key — obtain from [console.groq.com](https://console.groq.com) |
-
-For production deployment on Vercel, add this via the Vercel dashboard under **Project Settings → Environment Variables**.
-
----
-
 ## Deployment
 
 This project is configured for zero-configuration deployment on Vercel.
@@ -153,19 +141,6 @@ The `api/generate.js` serverless function is automatically detected and deployed
 
 ---
 
-## Roadmap
-
-- [ ] PDF and document upload support
-- [ ] Export to PDF
-- [ ] Spaced repetition system
-- [ ] AI study planner
-- [ ] User accounts and saved sessions
-- [ ] Learning analytics dashboard
-- [ ] Multi-language support
-- [ ] Voice-based input
-
----
-
 ## Author
 
 **Minna Nourin** — Aspiring AI & Data Professional
@@ -174,7 +149,3 @@ The `api/generate.js` serverless function is automatically detected and deployed
 [![GitHub](https://img.shields.io/badge/GitHub-MinnaNourin-black?style=flat-square&logo=github)](https://github.com/MinnaNourin)
 
 ---
-
-## License
-
-This project is licensed under the MIT License.
