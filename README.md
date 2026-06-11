@@ -96,11 +96,10 @@ Recallify-AI/
 ├── index.html          # Main application UI
 ├── api/
 │   └── generate.js     # Vercel serverless function — Groq API proxy
-├── images/
-│   ├── lesson-text.png
-│   ├── flashcards.png
-│   ├── key-concepts.png
-│   └── revision-cards.png
+├── lessontext.png
+├── flashcards.png
+├── keyconcept.png
+└── revision.png
 └── README.md
 ```
 
