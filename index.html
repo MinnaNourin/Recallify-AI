@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recallify — Study Smarter</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:        #0A0B0F;
+  --bg2:       #0E1018;
+  --surface:   #13151E;
+  --surface2:  #191C27;
+  --surface3:  #1E2130;
+  --ink:       #F0F2FF;
+  --ink2:      #B8BCCC;
+  --muted:     #6B7080;
+  --border:    rgba(255,255,255,0.07);
+  --border2:   rgba(255,255,255,0.12);
+  --violet:    #7C6DFA;
+  --violet2:   #9B8EFF;
+  --violet-lt: rgba(124,109,250,0.12);
+  --violet-md: rgba(124,109,250,0.25);
+  --teal:      #2DD4BF;
+  --teal-lt:   rgba(45,212,191,0.1);
+  --amber:     #F59E0B;
+  --amber-lt:  rgba(245,158,11,0.1);
+  --red:       #F87171;
+  --green:     #4ADE80;
+  --radius:    14px;
+  --radius-sm: 9px;
+  --glow:      0 0 40px rgba(124,109,250,0.15);
+  --font:      'Inter', sans-serif;
+  --mono:      'JetBrains Mono', monospace;
+}
+
+body.light-mode {
+  --bg:        #F0F2F8;
+  --bg2:       #FFFFFF;
+  --surface:   #FFFFFF;
+  --surface2:  #F7F8FC;
+  --surface3:  #EEF0F8;
+  --ink:       #111827;
+  --ink2:      #374151;
+  --muted:     #6B7280;
+  --border:    rgba(0,0,0,0.08);
+  --border2:   rgba(0,0,0,0.14);
+  --violet2:   #5B4EE8;
+  --violet-lt: rgba(124,109,250,0.08);
+  --violet-md: rgba(124,109,250,0.2);
+  --teal-lt:   rgba(13,148,136,0.08);
+  --red:       #DC2626;
+}
+body.light-mode::before, body.light-mode::after { opacity: 0.05; }
+body.light-mode header { background: rgba(255,255,255,0.9); }
+body.light-mode .page-title h1 {
+  background: linear-gradient(135deg, #1e1b4b 30%, #7C6DFA);
+  -webkit-background-clip: text; background-clip: text;
+}
+body.light-mode select option { background: #fff; color: #111; }
+body.light-mode .card-face.back {
+  background: linear-gradient(135deg, rgba(124,109,250,0.06), rgba(167,139,250,0.03));
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+  line-height: 1.6;
+  overflow-x: hidden;
+  transition: background .35s, color .35s;
+}
+
+/* Ambient background orbs */
+body::before, body::after {
+  content: '';
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(100px);
+  opacity: 0.12;
+}
+body::before {
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, #7C6DFA, transparent 70%);
+  top: -200px; left: -100px;
+  animation: drift1 20s ease-in-out infinite alternate;
+}
+body::after {
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, #2DD4BF, transparent 70%);
+  bottom: -150px; right: -100px;
+  animation: drift2 25s ease-in-out infinite alternate;
+}
+@keyframes drift1 { from { transform: translate(0,0); } to { transform: translate(80px,60px); } }
+@keyframes drift2 { from { transform: translate(0,0); } to { transform: translate(-60px,-40px); } }
+
+header {
+  background: rgba(13,15,24,0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  position: sticky; top: 0; z-index: 50;
+}
+.header-inner {
+  max-width: 1100px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 60px;
+}
+.logo-wrap { display: flex; align-items: center; gap: 10px; }
+.logo-icon {
+  width: 34px; height: 34px; border-radius: 9px;
+  background: linear-gradient(135deg, var(--violet), #a78bfa);
+  display: grid; place-items: center; font-size: 0;
+  box-shadow: 0 0 20px rgba(124,109,250,0.4);
+  animation: pulse-logo 3s ease-in-out infinite;
+}
+@keyframes pulse-logo {
+  0%,100% { box-shadow: 0 0 20px rgba(124,109,250,0.4); }
+  50%      { box-shadow: 0 0 35px rgba(124,109,250,0.7); }
+}
+.logo-text { font-size: 17px; font-weight: 700; letter-spacing: -.02em; }
+.logo-text span { color: var(--violet2); }
+
+.theme-toggle {
+  display: flex; align-items: center; gap: 0;
+  background: var(--surface2); border: 1px solid var(--border2);
+  border-radius: 100px; padding: 4px; cursor: pointer;
+  transition: background .2s, border-color .2s;
+}
+.theme-toggle-track {
+  width: 40px; height: 22px; border-radius: 100px;
+  background: var(--violet-lt); border: 1px solid var(--violet-md);
+  position: relative; transition: background .3s, border-color .3s;
+}
+.theme-toggle-thumb {
+  position: absolute; top: 2px; left: 2px;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: var(--violet2);
+  box-shadow: 0 0 8px rgba(124,109,250,0.6);
+  transition: transform .3s cubic-bezier(.4,0,.2,1), background .3s, box-shadow .3s;
+  display: grid; place-items: center; font-size: 9px;
+}
+.theme-toggle-icon { font-size: 13px; padding: 0 6px; transition: opacity .2s; user-select: none; }
+.theme-toggle-icon.sun { opacity: 0.4; }
+.theme-toggle-icon.moon { opacity: 1; }
+
+body.light-mode .theme-toggle-track {
+  background: rgba(251,191,36,0.15); border-color: rgba(251,191,36,0.3);
+}
+body.light-mode .theme-toggle-thumb {
+  transform: translateX(18px);
+  background: #F59E0B;
+  box-shadow: 0 0 8px rgba(245,158,11,0.5);
+}
+body.light-mode .theme-toggle-icon.sun { opacity: 1; }
+body.light-mode .theme-toggle-icon.moon { opacity: 0.4; }
+
+main {
+  max-width: 1100px; margin: 0 auto;
+  padding: 40px 24px 80px;
+  position: relative; z-index: 1;
+}
+
+.page-title-row {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 16px; margin-bottom: 32px; flex-wrap: wrap;
+}
+.page-title h1 {
+  font-size: clamp(24px, 3vw, 34px); font-weight: 700;
+  letter-spacing: -.03em; line-height: 1.15;
+  background: linear-gradient(135deg, #F0F2FF 30%, #a78bfa);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: title-in 0.8s cubic-bezier(.4,0,.2,1) both;
+}
+@keyframes title-in {
+  from { opacity:0; transform: translateY(12px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+.page-title p {
+  font-size: 15px; color: var(--muted); margin-top: 6px;
+  animation: title-in 0.8s 0.1s cubic-bezier(.4,0,.2,1) both;
+}
+
+/* ── INPUT PANEL ── */
+.input-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 26px;
+  margin-bottom: 24px;
+  position: relative; overflow: hidden;
+  animation: panel-in 0.6s 0.2s cubic-bezier(.4,0,.2,1) both;
+  transition: border-color 0.3s;
+}
+.input-panel:focus-within {
+  border-color: var(--border2);
+  box-shadow: 0 0 0 1px rgba(124,109,250,0.15);
+}
+@keyframes panel-in {
+  from { opacity:0; transform: translateY(16px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+.input-panel::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--violet), transparent);
+  opacity: 0.4;
+}
+.input-panel-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 14px; flex-wrap: wrap; gap: 10px;
+}
+.panel-label {
+  font-size: 11px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: .1em; color: var(--muted);
+  display: flex; align-items: center; gap: 8px;
+}
+.panel-label::before {
+  content: ''; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--violet); display: block;
+  box-shadow: 0 0 8px rgba(124,109,250,0.8);
+  animation: blink 2s ease-in-out infinite;
+}
+@keyframes blink {
+  0%,100% { opacity:1; } 50% { opacity:0.3; }
+}
+.char-count { font-size: 11px; color: var(--muted); font-family: var(--mono); }
+
+textarea {
+  width: 100%; min-height: 200px; resize: vertical;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg2); color: var(--ink);
+  font-family: var(--font); font-size: 14.5px; line-height: 1.7;
+  padding: 16px 18px; outline: none;
+  transition: border-color .2s, box-shadow .2s;
+}
+textarea:focus {
+  border-color: rgba(124,109,250,0.4);
+  box-shadow: 0 0 0 3px rgba(124,109,250,0.08), 0 0 20px rgba(124,109,250,0.06);
+}
+textarea::placeholder { color: var(--muted); }
+
+.options-row {
+  display: flex; align-items: center; gap: 14px;
+  margin-top: 16px; flex-wrap: wrap;
+}
+.opt-group { display: flex; align-items: center; gap: 8px; }
+.opt-group label { font-size: 12px; color: var(--muted); font-weight: 500; }
+
+select {
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  background: var(--surface2); color: var(--ink);
+  font-family: var(--font); font-size: 13px; font-weight: 500;
+  padding: 8px 12px; outline: none; cursor: pointer;
+  transition: border-color .2s, background .2s;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath stroke='%236B7080' stroke-width='1.5' d='m1 1 4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 28px;
+}
+select:focus { border-color: var(--violet); background-color: var(--surface3); }
+select option { background: #1a1d2e; }
+
+.toggle-wrap { display: flex; gap: 6px; }
+.toggle-btn {
+  font-size: 12px; font-weight: 600; padding: 7px 14px;
+  border: 1px solid var(--border2); border-radius: 100px;
+  background: var(--surface2); color: var(--muted); cursor: pointer;
+  transition: all .2s; white-space: nowrap;
+}
+.toggle-btn.active {
+  background: var(--violet-lt); border-color: var(--violet-md);
+  color: var(--violet2);
+  box-shadow: 0 0 12px rgba(124,109,250,0.15);
+}
+.toggle-btn:hover:not(.active) { border-color: var(--border2); color: var(--ink2); background: var(--surface3); }
+
+.action-bar {
+  display: flex; align-items: center; gap: 12px;
+  margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.btn-generate {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: linear-gradient(135deg, var(--violet), #a78bfa);
+  color: #fff; font-family: var(--font); font-size: 14px; font-weight: 600;
+  border: none; border-radius: 100px; padding: 12px 28px; cursor: pointer;
+  box-shadow: 0 4px 20px rgba(124,109,250,0.4);
+  transition: transform .2s, box-shadow .2s, opacity .2s;
+  position: relative; overflow: hidden;
+}
+.btn-generate::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, transparent 40%, rgba(255,255,255,0.15) 100%);
+  opacity: 0; transition: opacity .2s;
+}
+.btn-generate:hover:not(:disabled)::after { opacity: 1; }
+.btn-generate:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(124,109,250,0.55);
+}
+.btn-generate:active:not(:disabled) { transform: translateY(0); }
+.btn-generate:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+.btn-clear {
+  font-size: 13px; font-weight: 500; color: var(--muted);
+  background: transparent; border: 1px solid var(--border2);
+  border-radius: 100px; padding: 10px 20px; cursor: pointer;
+  transition: all .2s;
+}
+.btn-clear:hover { background: var(--surface2); color: var(--ink2); border-color: var(--border2); }
+
+.example-link {
+  font-size: 13px; color: var(--violet2); cursor: pointer;
+  text-decoration: underline; text-underline-offset: 3px; margin-left: auto;
+  transition: color .2s;
+}
+.example-link:hover { color: #c4b5fd; }
+
+/* ── LOADING ── */
+.loading-bar {
+  display: none; height: 2px;
+  background: linear-gradient(90deg, var(--violet), #a78bfa, var(--teal), var(--violet));
+  background-size: 300% 100%;
+  border-radius: 99px; margin-top: 16px;
+  animation: flow 2s linear infinite;
+}
+.loading-bar.show { display: block; }
+@keyframes flow { 0%{background-position:0 0} 100%{background-position:300% 0} }
+
+.loading-msg {
+  display: none; text-align: center; padding: 48px 0;
+  color: var(--muted); font-size: 14px;
+}
+.loading-msg.show { display: block; }
+.loading-msg .spin {
+  display: inline-block;
+  animation: spin .9s linear infinite;
+  margin-right: 8px;
+  color: var(--violet2);
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.error-box {
+  display: none;
+  background: rgba(248,113,113,0.08);
+  border: 1px solid rgba(248,113,113,0.3);
+  border-radius: var(--radius-sm); padding: 14px 18px; margin-top: 16px;
+  font-size: 14px; color: var(--red); line-height: 1.6;
+}
+.error-box.show { display: block; }
+
+/* ── RESULTS ── */
+#results { display: none; }
+#results.show { display: block; }
+
+.stats-row {
+  display: flex; gap: 12px; margin-bottom: 22px; flex-wrap: wrap;
+}
+.stat-chip {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 10px 16px;
+  font-size: 13px; font-weight: 500;
+  animation: chip-in 0.4s cubic-bezier(.4,0,.2,1) both;
+  transition: border-color .2s, transform .2s;
+}
+.stat-chip:hover { border-color: var(--border2); transform: translateY(-1px); }
+@keyframes chip-in {
+  from { opacity:0; transform:scale(0.95) translateY(8px); }
+  to   { opacity:1; transform:scale(1)    translateY(0);   }
+}
+.stat-chip .num { font-size: 20px; font-weight: 700; font-family: var(--mono); }
+.stat-chip .lbl { color: var(--muted); font-size: 11px; margin-top: 1px; text-transform: uppercase; letter-spacing: .05em; }
+.chip-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+.tab-nav {
+  display: flex; gap: 4px; margin-bottom: 22px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 5px;
+  width: fit-content;
+}
+.tab-btn {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 13px; font-weight: 600; color: var(--muted);
+  background: transparent; border: none; border-radius: 7px;
+  padding: 9px 18px; cursor: pointer; transition: all .2s;
+  white-space: nowrap;
+}
+.tab-btn.active {
+  background: linear-gradient(135deg, var(--violet), #8b7cf8);
+  color: #fff;
+  box-shadow: 0 2px 12px rgba(124,109,250,0.4);
+}
+.tab-btn:hover:not(.active) { background: var(--surface2); color: var(--ink2); }
+.tab-badge {
+  background: rgba(255,255,255,0.18); border-radius: 100px;
+  font-size: 11px; padding: 1px 7px; font-family: var(--mono);
+}
+.tab-btn:not(.active) .tab-badge { background: var(--surface3); color: var(--muted); }
+
+.export-bar {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 22px; flex-wrap: wrap;
+}
+.export-bar span { font-size: 12px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .07em; }
+.btn-export {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 600; color: var(--ink2);
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 100px; padding: 7px 14px; cursor: pointer;
+  transition: all .2s;
+}
+.btn-export:hover { background: var(--surface2); color: var(--ink); border-color: rgba(255,255,255,0.2); }
+
+/* ── TAB PANELS ── */
+.tab-panel { display: none; }
+.tab-panel.active { display: block; animation: fade-up 0.35s cubic-bezier(.4,0,.2,1) both; }
+@keyframes fade-up {
+  from { opacity:0; transform:translateY(12px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* ── FLASHCARDS ── */
+.flashcard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+.flashcard {
+  perspective: 1000px; height: 210px; cursor: pointer;
+}
+.flashcard:nth-child(1)  { animation-delay: 0.00s; }
+.flashcard:nth-child(2)  { animation-delay: 0.04s; }
+.flashcard:nth-child(3)  { animation-delay: 0.08s; }
+.flashcard:nth-child(4)  { animation-delay: 0.12s; }
+.flashcard:nth-child(5)  { animation-delay: 0.16s; }
+.flashcard:nth-child(6)  { animation-delay: 0.20s; }
+.flashcard:nth-child(7)  { animation-delay: 0.24s; }
+.flashcard:nth-child(8)  { animation-delay: 0.28s; }
+.flashcard:nth-child(9)  { animation-delay: 0.32s; }
+.flashcard:nth-child(10) { animation-delay: 0.36s; }
+.flashcard:nth-child(n+11) { animation-delay: 0.40s; }
+.flashcard { animation: card-stagger 0.45s cubic-bezier(.4,0,.2,1) both; }
+@keyframes card-stagger {
+  from { opacity:0; transform: translateY(20px) scale(0.97); }
+  to   { opacity:1; transform: translateY(0)    scale(1);    }
+}
+.flashcard-inner {
+  position: relative; width: 100%; height: 100%;
+  transform-style: preserve-3d;
+  transition: transform .65s cubic-bezier(.4,0,.2,1);
+}
+.flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+.card-face {
+  position: absolute; inset: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 22px 20px;
+  backface-visibility: hidden; -webkit-backface-visibility: hidden;
+  display: flex; flex-direction: column;
+  transition: border-color .2s, box-shadow .2s;
+}
+.flashcard:hover .card-face {
+  border-color: var(--border2);
+  box-shadow: 0 0 0 1px rgba(124,109,250,0.1), 0 8px 32px rgba(0,0,0,0.3);
+}
+.card-face.back {
+  transform: rotateY(180deg);
+  background: linear-gradient(135deg, rgba(124,109,250,0.08), rgba(167,139,250,0.05));
+  border-color: rgba(124,109,250,0.2);
+}
+.card-num {
+  font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .1em;
+  color: var(--muted); margin-bottom: 10px; font-family: var(--mono);
+}
+.card-face.back .card-num { color: var(--violet2); }
+.card-text {
+  font-size: 14px; font-weight: 500; line-height: 1.6; flex: 1;
+  display: flex; align-items: center; color: var(--ink);
+}
+.card-face.back .card-text { font-size: 13.5px; font-weight: 400; color: var(--ink2); align-items: flex-start; }
+.card-hint {
+  font-size: 10px; color: var(--muted); margin-top: 10px;
+  display: flex; align-items: center; gap: 5px; letter-spacing: .03em;
+}
+.card-face.back .card-hint { color: var(--violet2); }
+
+/* ── CONCEPTS ── */
+.concepts-list { display: flex; flex-direction: column; gap: 10px; }
+.concept-item {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 18px 22px;
+  display: grid; grid-template-columns: 1fr 2fr; gap: 16px;
+  transition: border-color .2s, transform .2s;
+  animation: card-stagger 0.4s cubic-bezier(.4,0,.2,1) both;
+}
+.concept-item:hover { border-color: var(--border2); transform: translateX(3px); }
+.concept-term {
+  font-size: 14px; font-weight: 700; color: var(--ink);
+  display: flex; align-items: flex-start; padding-right: 16px;
+  border-right: 2px solid rgba(124,109,250,0.3);
+}
+.concept-def { font-size: 13.5px; color: var(--ink2); line-height: 1.7; }
+
+/* ── REVISION ── */
+.revision-list { display: flex; flex-direction: column; gap: 14px; }
+.revision-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 22px 24px;
+  transition: border-color .2s;
+  animation: card-stagger 0.4s cubic-bezier(.4,0,.2,1) both;
+  position: relative; overflow: hidden;
+}
+.revision-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; bottom: 0; width: 3px;
+  background: linear-gradient(180deg, var(--violet), var(--teal));
+  border-radius: 0 3px 3px 0;
+}
+.revision-card:hover { border-color: var(--border2); }
+.revision-heading {
+  font-size: 15px; font-weight: 600; margin-bottom: 14px;
+  display: flex; align-items: center; gap: 10px; padding-left: 10px;
+}
+.revision-tag {
+  font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em;
+  background: var(--teal-lt); color: var(--teal);
+  border-radius: 100px; padding: 2px 9px;
+}
+.revision-points { list-style: none; display: flex; flex-direction: column; gap: 8px; padding-left: 10px; }
+.revision-points li {
+  font-size: 13.5px; color: var(--ink2); line-height: 1.65;
+  display: flex; align-items: flex-start; gap: 10px;
+}
+.revision-points li::before {
+  content: '—'; color: var(--violet2); font-weight: 700;
+  min-width: 12px; margin-top: 1px; font-size: 11px; font-family: var(--mono);
+}
+
+/* ── EMPTY STATE ── */
+.empty-state {
+  text-align: center; padding: 80px 24px;
+  background: var(--surface); border: 1px dashed var(--border2);
+  border-radius: var(--radius);
+}
+.empty-icon { font-size: 48px; margin-bottom: 16px; display: block; }
+.empty-state h3 { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+.empty-state p { font-size: 14px; color: var(--muted); max-width: 340px; margin: 0 auto; }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed; bottom: 28px; right: 28px;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  color: var(--ink); font-size: 13px; font-weight: 500;
+  border-radius: var(--radius-sm); padding: 13px 20px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(124,109,250,0.1);
+  z-index: 999;
+  transform: translateY(80px); opacity: 0;
+  transition: transform .3s cubic-bezier(.4,0,.2,1), opacity .3s;
+  display: flex; align-items: center; gap: 8px;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .options-row { gap: 10px; }
+  .concept-item { grid-template-columns: 1fr; }
+  .concept-term { border-right: none; padding-right: 0; border-bottom: 2px solid rgba(124,109,250,0.3); padding-bottom: 10px; }
+  .flashcard-grid { grid-template-columns: 1fr 1fr; }
+  .tab-btn { padding: 8px 12px; }
+}
+@media (max-width: 480px) {
+  main { padding: 20px 16px 56px; }
+  .flashcard-grid { grid-template-columns: 1fr; }
+  .tab-nav { overflow-x: auto; width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .flashcard-inner, body::before, body::after, .logo-icon { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo-wrap">
+      <div class="logo-icon">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10 2C7.5 2 5.5 3.8 5.5 6c0 .8.25 1.55.68 2.17C5.1 8.7 4.5 9.78 4.5 11c0 1.93 1.4 3.54 3.25 3.9V16.5a.75.75 0 001.5 0v-1.6c1.85-.36 3.25-1.97 3.25-3.9 0-1.22-.6-2.3-1.68-2.83.43-.62.68-1.37.68-2.17C11.5 3.8 12.5 2 10 2z" fill="white" opacity="0.9"/>
+            <path d="M10 2C12.5 2 14.5 3.8 14.5 6c0 .8-.25 1.55-.68 2.17C14.9 8.7 15.5 9.78 15.5 11c0 1.93-1.4 3.54-3.25 3.9V16.5a.75.75 0 01-1.5 0v-1.6C8.9 14.54 7.5 12.93 7.5 11c0-1.22.6-2.3 1.68-2.83A4.07 4.07 0 018.5 6C8.5 3.8 7.5 2 10 2z" fill="white" opacity="0.5"/>
+            <circle cx="10" cy="9" r="1.5" fill="white"/>
+            <path d="M8.5 12.5h3M9 14h2" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
+          </svg>
+        </div>
+      <span class="logo-text">Recall<span>ify</span></span>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle light/dark mode" title="Toggle theme">
+      <span class="theme-toggle-icon sun">☀️</span>
+      <div class="theme-toggle-track">
+        <div class="theme-toggle-thumb"></div>
+      </div>
+      <span class="theme-toggle-icon moon">🌙</span>
+    </button>
+  </div>
+</header>
+
+<main>
+  <div class="page-title-row">
+    <div class="page-title">
+      <h1 style="font-family:'Space Grotesk',sans-serif;font-weight:700;">Recallify AI</h1>
+      <p>AI-Powered Learning Workspace • Transform notes into flashcards, summaries, revision kits, and exam-ready insights instantly.</p>
+    </div>
+  </div>
+
+  <div class="input-panel">
+    <div class="input-panel-header">
+      <span class="panel-label">Lesson content</span>
+      <span class="char-count" id="charCount">0 characters</span>
+    </div>
+
+    <textarea
+      id="lessonInput"
+      placeholder="Paste your lesson text, notes, or topic here…
+
+Example: 'Photosynthesis is the process by which plants use sunlight, water, and carbon dioxide to produce oxygen and energy in the form of glucose. It occurs in two stages: the light-dependent reactions and the Calvin cycle…'"
+      oninput="updateCharCount()"
+    ></textarea>
+
+    <div class="options-row">
+      <div class="opt-group">
+        <label>Flashcard count</label>
+        <select id="cardCount">
+          <option value="10">10 cards</option>
+          <option value="15" selected>15 cards</option>
+          <option value="20">20 cards</option>
+          <option value="25">25 cards</option>
+        </select>
+      </div>
+      <div class="opt-group">
+        <label>Difficulty</label>
+        <select id="difficulty">
+          <option value="beginner">Beginner</option>
+          <option value="intermediate" selected>Intermediate</option>
+          <option value="advanced">Advanced</option>
+        </select>
+      </div>
+      <div class="opt-group">
+        <label>Output</label>
+        <div class="toggle-wrap" id="outputToggles">
+          <button class="toggle-btn active" data-type="flashcards">Flashcards</button>
+          <button class="toggle-btn active" data-type="concepts">Key Concepts</button>
+          <button class="toggle-btn active" data-type="revision">Revision Cards</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="action-bar">
+      <button class="btn-generate" id="generateBtn" onclick="generate()">
+        <span>✦</span> Generate study materials
+      </button>
+      <button class="btn-clear" onclick="clearAll()">Clear</button>
+      <span class="example-link" onclick="loadExample()">Load example topic →</span>
+    </div>
+
+    <div class="loading-bar" id="loadingBar"></div>
+    <div class="error-box" id="errorBox"></div>
+  </div>
+
+  <div class="loading-msg" id="loadingMsg">
+    <span class="spin">⟳</span> Analysing your content and generating study materials…
+  </div>
+
+  <div id="results">
+    <div class="stats-row" id="statsRow"></div>
+    <div class="tab-nav" id="tabNav"></div>
+    <div class="export-bar">
+      <span>Export:</span>
+      <button class="btn-export" onclick="exportJSON()">⬇ Download JSON</button>
+      <button class="btn-export" onclick="exportText()">⬇ Download TXT</button>
+      <button class="btn-export" onclick="copyAll()">⎘ Copy all</button>
+    </div>
+    <div id="flashcardsPanel" class="tab-panel"></div>
+    <div id="conceptsPanel"   class="tab-panel"></div>
+    <div id="revisionPanel"   class="tab-panel"></div>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let generatedData = null;
+let activeTab = 'flashcards';
+
+function updateCharCount() {
+  const v = document.getElementById('lessonInput').value;
+  document.getElementById('charCount').textContent = `${v.length.toLocaleString()} characters`;
+}
+
+document.getElementById('outputToggles').addEventListener('click', e => {
+  if (e.target.classList.contains('toggle-btn')) {
+    e.target.classList.toggle('active');
+  }
+});
+
+function loadExample() {
+  document.getElementById('lessonInput').value = `The Water Cycle (Hydrological Cycle)
+
+The water cycle describes how water continuously moves through Earth's systems. It is driven primarily by solar energy and gravity.
+
+Key stages:
+1. Evaporation: Water from oceans, lakes, and rivers is heated by the sun and turns into water vapour, rising into the atmosphere. Approximately 86% of global evaporation occurs from the oceans.
+
+2. Transpiration: Plants release water vapour through tiny pores called stomata in their leaves. Together with evaporation, this is called evapotranspiration.
+
+3. Condensation: As water vapour rises and cools, it condenses around tiny dust particles to form clouds and fog. The temperature at which this occurs is called the dew point.
+
+4. Precipitation: When water droplets in clouds combine and become heavy enough, they fall as rain, snow, sleet, or hail depending on temperature conditions.
+
+5. Surface Runoff: Water flows over the land surface into streams and rivers, eventually returning to the ocean. The rate of runoff depends on soil type, vegetation cover, and slope gradient.
+
+6. Infiltration: Some precipitation soaks into the ground, replenishing groundwater stores called aquifers. Water held underground is called groundwater.
+
+7. Collection: Water gathers in oceans, lakes, rivers, and glaciers — completing the cycle.
+
+Important terms:
+- Watershed / drainage basin: The area of land that drains into a single river system
+- Groundwater: Water stored in underground rock formations (aquifers)
+- Water table: The upper level of groundwater saturation in soil or rock
+- Interception: When vegetation catches precipitation before it reaches the ground`;
+  updateCharCount();
+}
+
+function clearAll() {
+  document.getElementById('lessonInput').value = '';
+  updateCharCount();
+  document.getElementById('results').classList.remove('show');
+  document.getElementById('errorBox').classList.remove('show');
+  generatedData = null;
+}
+
+function showToast(msg, emoji = '✓') {
+  const t = document.getElementById('toast');
+  t.textContent = `${emoji} ${msg}`;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+async function generate() {
+  const input = document.getElementById('lessonInput').value.trim();
+  if (!input) { showToast('Paste some lesson content first.', '⚠'); return; }
+  if (input.length < 50) { showToast('Content is too short — add more detail.', '⚠'); return; }
+
+  const cardCount  = document.getElementById('cardCount').value;
+  const difficulty = document.getElementById('difficulty').value;
+  const activeOutputs = [...document.querySelectorAll('.toggle-btn.active')].map(b => b.dataset.type);
+  if (!activeOutputs.length) { showToast('Select at least one output type.', '⚠'); return; }
+
+  const btn = document.getElementById('generateBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin" style="display:inline-block;animation:spin .9s linear infinite">⟳</span> Generating…';
+  document.getElementById('loadingBar').classList.add('show');
+  document.getElementById('loadingMsg').classList.add('show');
+  document.getElementById('results').classList.remove('show');
+  document.getElementById('errorBox').classList.remove('show');
+
+  const prompt = buildPrompt(input, cardCount, difficulty, activeOutputs);
+
+  try {
+
+  const response = await fetch('/api/generate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ prompt })
+    });
+
+    if (!response.ok) {
+      throw new Error(`API error ${response.status}`);
+    }
+
+    const data = await response.json();
+    const raw = data.content;
+
+    let parsed;
+    try {
+      const cleaned = raw.replace(/^```json\s*/i,'').replace(/```\s*$/,'').trim();
+      parsed = JSON.parse(cleaned);
+    } catch {
+      throw new Error('Could not parse AI response. Please try again.');
+    }
+
+    generatedData = parsed;
+    renderResults(parsed, activeOutputs);
+
+  } catch (err) {
+    const box = document.getElementById('errorBox');
+    box.textContent = `Error: ${err.message}`;
+    box.classList.add('show');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<span>✦</span> Generate study materials';
+    document.getElementById('loadingBar').classList.remove('show');
+    document.getElementById('loadingMsg').classList.remove('show');
+  }
+}
+
+function buildPrompt(input, cardCount, difficulty, outputs) {
+  const wants = {
+    flashcards: outputs.includes('flashcards'),
+    concepts:   outputs.includes('concepts'),
+    revision:   outputs.includes('revision'),
+  };
+
+  return `Generate study materials from the following lesson content at ${difficulty} level.
+
+LESSON CONTENT:
+${input}
+
+Return a single JSON object with this exact structure (only include keys for requested output types):
+{
+  ${wants.flashcards ? `"flashcards": [
+    { "id": 1, "question": "...", "answer": "..." }
+    // Generate exactly ${cardCount} flashcards. Questions should be clear and test understanding, not just recall. Answers should be concise (1–3 sentences).
+  ],` : ''}
+  ${wants.concepts ? `"key_concepts": [
+    { "term": "...", "definition": "..." }
+    // Extract 8–12 key terms/concepts with clear, precise definitions.
+  ],` : ''}
+  ${wants.revision ? `"revision_cards": [
+    { "section": "Section title", "points": ["bullet point 1", "bullet point 2", "..."] }
+    // Create 4–6 revision cards grouping content thematically. Each card has 4–7 bullet points.
+  ]` : ''}
+}
+
+Return only valid JSON. No markdown. No explanation.`;
+}
+
+function renderResults(data, activeOutputs) {
+  const statsRow = document.getElementById('statsRow');
+  statsRow.innerHTML = '';
+  const stats = [];
+  if (data.flashcards)     stats.push({ num: data.flashcards.length,     lbl: 'Flashcards',    color: '#7C6DFA' });
+  if (data.key_concepts)   stats.push({ num: data.key_concepts.length,   lbl: 'Key concepts',  color: '#2DD4BF' });
+  if (data.revision_cards) stats.push({ num: data.revision_cards.length, lbl: 'Revision cards',color: '#F59E0B' });
+  stats.forEach((s, i) => {
+    const el = document.createElement('div');
+    el.className = 'stat-chip';
+    el.style.animationDelay = `${i * 0.08}s`;
+    el.innerHTML = `
+      <div class="chip-dot" style="background:${s.color};box-shadow:0 0 8px ${s.color}88"></div>
+      <div>
+        <div class="num" style="color:${s.color}">${s.num}</div>
+        <div class="lbl">${s.lbl}</div>
+      </div>`;
+    statsRow.appendChild(el);
+  });
+
+  const tabNav = document.getElementById('tabNav');
+  tabNav.innerHTML = '';
+  const tabs = [];
+  if (data.flashcards)     tabs.push({ id:'flashcards', label:'Flashcards',   count: data.flashcards.length,     emoji:'🃏' });
+  if (data.key_concepts)   tabs.push({ id:'concepts',   label:'Key Concepts', count: data.key_concepts.length,   emoji:'📖' });
+  if (data.revision_cards) tabs.push({ id:'revision',   label:'Revision',     count: data.revision_cards.length, emoji:'📋' });
+
+  tabs.forEach((t, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'tab-btn' + (i === 0 ? ' active' : '');
+    btn.dataset.tab = t.id;
+    btn.innerHTML = `${t.emoji} ${t.label} <span class="tab-badge">${t.count}</span>`;
+    btn.addEventListener('click', () => switchTab(t.id));
+    tabNav.appendChild(btn);
+  });
+  if (tabs.length) { activeTab = tabs[0].id; showPanel(activeTab); }
+
+  if (data.flashcards)     renderFlashcards(data.flashcards);
+  if (data.key_concepts)   renderConcepts(data.key_concepts);
+  if (data.revision_cards) renderRevision(data.revision_cards);
+
+  document.getElementById('results').classList.add('show');
+  document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  showToast(`Generated ${stats.map(s => `${s.num} ${s.lbl.toLowerCase()}`).join(', ')}!`, '✦');
+}
+
+function switchTab(id) {
+  activeTab = id;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === id));
+  showPanel(id);
+}
+function showPanel(id) {
+  document.getElementById('flashcardsPanel').classList.toggle('active', id === 'flashcards');
+  document.getElementById('conceptsPanel').classList.toggle('active',   id === 'concepts');
+  document.getElementById('revisionPanel').classList.toggle('active',   id === 'revision');
+}
+
+function renderFlashcards(cards) {
+  const panel = document.getElementById('flashcardsPanel');
+  if (!cards.length) { panel.innerHTML = emptyState('No flashcards generated.'); return; }
+  panel.innerHTML = `<div class="flashcard-grid">${cards.map((c, i) => `
+    <div class="flashcard" onclick="this.classList.toggle('flipped')" tabindex="0"
+         onkeydown="if(event.key==='Enter'||event.key===' ')this.classList.toggle('flipped')"
+         aria-label="Flashcard ${i+1}: ${escHtml(c.question)}">
+      <div class="flashcard-inner">
+        <div class="card-face front">
+          <div class="card-num">Q${String(i+1).padStart(2,'0')}</div>
+          <div class="card-text">${escHtml(c.question)}</div>
+          <div class="card-hint">↵ click to reveal answer</div>
+        </div>
+        <div class="card-face back">
+          <div class="card-num">A${String(i+1).padStart(2,'0')}</div>
+          <div class="card-text">${escHtml(c.answer)}</div>
+          <div class="card-hint">↵ click to flip back</div>
+        </div>
+      </div>
+    </div>`).join('')}</div>`;
+}
+
+function renderConcepts(concepts) {
+  const panel = document.getElementById('conceptsPanel');
+  if (!concepts.length) { panel.innerHTML = emptyState('No key concepts extracted.'); return; }
+  panel.innerHTML = `<div class="concepts-list">${concepts.map((c, i) => {
+    const d = Math.floor(i * 0.06 * 100);
+    return `<div class="concept-item" style="animation-delay:${d}ms">
+      <div class="concept-term">${escHtml(c.term)}</div>
+      <div class="concept-def">${escHtml(c.definition)}</div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+function renderRevision(cards) {
+  const panel = document.getElementById('revisionPanel');
+  if (!cards.length) { panel.innerHTML = emptyState('No revision cards generated.'); return; }
+  panel.innerHTML = `<div class="revision-list">${cards.map((c, i) => `
+    <div class="revision-card" style="animation-delay:${i*60}ms">
+      <div class="revision-heading">
+        ${escHtml(c.section)}
+        <span class="revision-tag">Revision</span>
+      </div>
+      <ul class="revision-points">
+        ${(c.points || []).map(p => `<li>${escHtml(p)}</li>`).join('')}
+      </ul>
+    </div>`).join('')}</div>`;
+}
+
+function emptyState(msg) {
+  return `<div class="empty-state">
+    <span class="empty-icon">📭</span>
+    <h3>Nothing here</h3>
+    <p>${msg}</p>
+  </div>`;
+}
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function exportJSON() {
+  if (!generatedData) return;
+  const blob = new Blob([JSON.stringify(generatedData, null, 2)], { type: 'application/json' });
+  downloadBlob(blob, 'recallify-export.json');
+  showToast('JSON downloaded!', '⬇');
+}
+
+function exportText() {
+  if (!generatedData) return;
+  let txt = 'RECALLIFY — STUDY MATERIALS\n' + '='.repeat(50) + '\n\n';
+  if (generatedData.flashcards) {
+    txt += 'FLASHCARDS\n' + '-'.repeat(30) + '\n';
+    generatedData.flashcards.forEach((c, i) => { txt += `Q${i+1}: ${c.question}\nA${i+1}: ${c.answer}\n\n`; });
+  }
+  if (generatedData.key_concepts) {
+    txt += 'KEY CONCEPTS\n' + '-'.repeat(30) + '\n';
+    generatedData.key_concepts.forEach(c => { txt += `${c.term}: ${c.definition}\n\n`; });
+  }
+  if (generatedData.revision_cards) {
+    txt += 'REVISION CARDS\n' + '-'.repeat(30) + '\n';
+    generatedData.revision_cards.forEach(c => {
+      txt += `${c.section}\n`;
+      (c.points || []).forEach(p => txt += `  • ${p}\n`);
+      txt += '\n';
+    });
+  }
+  downloadBlob(new Blob([txt], { type: 'text/plain' }), 'recallify-export.txt');
+  showToast('TXT downloaded!', '⬇');
+}
+
+function copyAll() {
+  if (!generatedData) return;
+  let txt = '';
+  if (generatedData.flashcards) {
+    txt += 'FLASHCARDS\n';
+    generatedData.flashcards.forEach((c, i) => txt += `Q${i+1}: ${c.question}\nA: ${c.answer}\n\n`);
+  }
+  if (generatedData.key_concepts) {
+    txt += 'KEY CONCEPTS\n';
+    generatedData.key_concepts.forEach(c => txt += `${c.term}: ${c.definition}\n`);
+    txt += '\n';
+  }
+  if (generatedData.revision_cards) {
+    txt += 'REVISION NOTES\n';
+    generatedData.revision_cards.forEach(c => {
+      txt += `${c.section}\n`;
+      (c.points || []).forEach(p => txt += `• ${p}\n`);
+      txt += '\n';
+    });
+  }
+  navigator.clipboard.writeText(txt).then(() => showToast('Copied to clipboard!', '⎘'));
+}
+
+function downloadBlob(blob, filename) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+document.addEventListener('keydown', e => {
+  if ((e.key === 'Enter' || e.key === ' ') && document.activeElement.classList.contains('flashcard')) {
+    e.preventDefault();
+    document.activeElement.classList.toggle('flipped');
+  }
+});
+
+function toggleTheme() {
+  const isLight = document.body.classList.toggle('light-mode');
+  localStorage.setItem('flashai-theme', isLight ? 'light' : 'dark');
+}
+
+(function initTheme() {
+  const saved = localStorage.getItem('flashai-theme');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  if (saved === 'light' || (!saved && !prefersDark)) {
+    document.body.classList.add('light-mode');
+  }
+})();
+</script>
+
+<footer style="
+margin-top:80px;
+padding:30px 20px;
+text-align:center;
+border-top:1px solid var(--border);
+background:rgba(255,255,255,0.02);
+backdrop-filter:blur(10px);
+">
+  <div style="
+    font-size:14px;
+    color:var(--ink2);
+    font-weight:600;
+    letter-spacing:.02em;
+  ">
+    Built by
+    <span style="
+      background:linear-gradient(135deg,#7C6DFA,#A78BFA);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      font-weight:700;
+    ">
+      Minna Nourin
+    </span>
+  </div>
+
+  <div style="
+    margin-top:6px;
+    font-size:12px;
+    color:var(--muted);
+  ">
+    Recallify AI • Smart Learning Workspace
+  </div>
+</footer>
+
+</body>
+</html>
